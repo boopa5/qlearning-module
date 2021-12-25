@@ -1,5 +1,12 @@
 class Model {
     constructor({
+        learningRate = 0.1,
+        epsilon = 0.1,
+        discountFactor = 0.9,
+        epsilonDecay = 0.99,
+        rewardFunc = (state) => 0,
+        qTable = {}
+    } = {
         learningRate = 0.5,
         epsilon = 0.1,
         discountFactor = 0.9,
