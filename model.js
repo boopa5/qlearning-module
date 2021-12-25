@@ -4,12 +4,14 @@ class Model {
         epsilon = 0.1,
         discountFactor = 0.9,
         epsilonDecay = 0.9,
+        rewardFunc = (state) => 0,
         qTable = {}
     }) {
         this._learningRate = learningRate;
         this._epsilon = epsilon;
         this._discountFactor = discountFactor;
         this._epsilonDecay = epsilonDecay;
+        this._rewardFunc = rewardFunc;
         this._qTable = qTable;
     }
 
@@ -41,6 +43,14 @@ class Model {
         return this._epsilonDecay;
     }
 
+    get rewardFunc() {
+        return this._rewardFunc;
+    }
+
+    set rewardFunc(rewardFunc) {
+        this._rewardFunc = rewardFunc;
+    }
+
     get qTable() {
         return this._qTable;
     }
@@ -49,10 +59,11 @@ class Model {
         this._qTable = qTable;
     }
 
-    updateQValue(state, action, newState, newAction, reward) {
+    updateQValue(state, action, newState, newActions, reward) {
         let oldValue = this.getQValue(state, action);
-        
-        this._qTable[state][action] = newValue;
+        let y = this._rewardFunc(state) + this._gamma * this.getQValue(newState, this.argmax(a => this.getQValue(newState, a), newActions));
+
+        this._qTable[state][action] = oldValue + this._learningRate * (y - oldValue);
     }
 
     argmax(func, inputs) {
